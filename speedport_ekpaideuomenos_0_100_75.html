@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speedport Plus Interactive Exercises</title>
+    <style>
+        :root {
+            --speedport-magenta: #e20074;
+            --speedport-magenta-hover: #b8005e;
+            --bg-main: #f0f2f5;
+            --header-bg: #1e242b;
+            --sidebar-bg: #2b323b;
+            --card-bg: #ffffff;
+            --text-dark: #222222;
+            --text-muted: #666666;
+            --border-color: #dcdcdc;
+            --success: #28a745;
+            --danger: #dc3545;
+            --info-bg: #e8f4f8;
+            --info-border: #17a2b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            font-size: 14px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--header-bg);
+            color: #ffffff;
+            padding: 8px 12px;
+            min-height: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--speedport-magenta);
+            gap: 8px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand .logo-magenta {
+            background-color: var(--speedport-magenta);
+            color: white;
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .brand .model-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: #e0e0e0;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 4px 10px;
+            border-radius: 16px;
+            font-size: 11px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--success);
+            box-shadow: 0 0 6px var(--success);
+        }
+
+        .btn-logout {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        /* Exercise Selection Bar */
+        .scenario-bar {
+            background: #252b33;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #3a424d;
+            flex-wrap: wrap;
+        }
+
+        .scenario-title {
+            color: #fff;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .btn-scenario {
+            background-color: #3b4450;
+            color: #e0e0e0;
+            border: 1px solid #525d6d;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .btn-scenario:hover {
+            background-color: #4c5767;
+            color: #fff;
+        }
+
+        .btn-scenario.active-scenario {
+            background-color: var(--speedport-magenta);
+            color: #fff;
+            border-color: var(--speedport-magenta);
+            font-weight: bold;
+        }
+
+        .btn-validate {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            margin-left: auto;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .btn-validate:hover {
+            background-color: #218838;
+        }
+
+        /* Exercise Box */
+        .exercise-card {
+            background-color: var(--info-bg);
+            border-left: 4px solid var(--info-border);
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 0 4px 4px 0;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .exercise-card h3 {
+            color: #0c5460;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .exercise-card ul {
+            margin-left: 20px;
+            margin-top: 5px;
+        }
+
+        /* Layout */
+        .main-container {
+            display: flex;
+            flex: 1;
+        }
+
+        aside {
+            width: 220px;
+            background-color: var(--sidebar-bg);
+            color: #cccccc;
+            flex-shrink: 0;
+        }
+
+        .nav-list {
+            list-style: none;
+            padding-top: 5px;
+        }
+
+        .nav-item {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            color: #bbbbbb;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+        }
+
+        .nav-item.active .nav-link {
+            background-color: var(--speedport-magenta);
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        main {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            min-width: 0;
+        }
+
+        .page-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        .card-header {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--speedport-magenta);
+            margin-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 6px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 10px 15px;
+            align-items: center;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #444;
+        }
+
+        .form-input, .form-select {
+            padding: 8px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            width: 100%;
+            outline: none;
+        }
+
+        .form-input:focus, .form-select:focus {
+            border-color: var(--speedport-magenta);
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 22px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0; height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc;
+            transition: .3s;
+            border-radius: 22px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px; width: 16px;
+            left: 3px; bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--speedport-magenta);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(22px);
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 8px;
+        }
+
+        .data-table th, .data-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 10px;
+            text-align: left;
+        }
+
+        .data-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .btn-save {
+            background-color: var(--speedport-magenta);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 12px;
+            width: 100%;
+        }
+
+        .btn-save:hover {
+            background-color: var(--speedport-magenta-hover);
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            display: none;
+            border: 1px solid transparent;
+            white-space: pre-line;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
+
+        footer {
+            background-color: #1a1e24;
+            color: #888888;
+            text-align: center;
+            padding: 8px;
+            font-size: 11px;
+        }
+
+        @media (max-width: 600px) {
+            header { padding: 6px 8px; }
+            .brand .model-name { font-size: 13px; }
+            .status-pill span:not(.status-dot) { display: none; }
+            aside { width: 60px; }
+            .nav-link { padding: 12px 8px; justify-content: center; text-align: center; }
+            .nav-text { display: none; }
+            .nav-icon { display: inline-block; font-size: 16px; }
+            main { padding: 8px; }
+            .card { padding: 10px; border-radius: 4px; }
+            .form-grid { grid-template-columns: 1fr; gap: 6px; }
+            .data-table th, .data-table td { padding: 6px 8px; font-size: 12px; }
+            .btn-validate { margin-left: 0; width: 100%; margin-top: 5px; }
+        }
+
+        @media (min-width: 601px) {
+            .nav-icon { display: inline-block; min-width: 20px; }
+        }
+        .training-panel {background:#fff;border:1px solid #ddd;padding:12px 15px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+        .training-panel select,.training-panel textarea {padding:8px;border:1px solid #ccc;border-radius:5px}
+        .training-panel button,.trainer-button {background:#e20074;color:#fff;border:0;border-radius:5px;padding:9px 12px;cursor:pointer}
+        #trainer-dashboard {display:none;background:#fff;padding:20px;margin:12px;border-radius:8px}
+        #trainer-dashboard table {width:100%;border-collapse:collapse;margin-top:12px}
+        #trainer-dashboard td,#trainer-dashboard th {border:1px solid #ddd;padding:9px;text-align:left}
+        #trainer-dashboard th {background:#f3f3f3}
+        #trainer-dashboard textarea {width:100%;min-height:90px;margin:8px 0}
+        .training-note {font-size:12px;color:#666}
+
+        .student-dash{margin:14px 16px;background:linear-gradient(135deg,#252b37,#373047);color:white;padding:20px;border-radius:16px;box-shadow:0 8px 22px #0002}
+        .student-dash h2{font-size:20px;margin-bottom:6px}.student-dash p{color:#e4dfe8;font-size:12px}
+        .score-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:16px}
+        .score-tile{background:#ffffff14;border:1px solid #ffffff29;border-radius:12px;padding:14px;min-width:0}
+        .score-tile .value{font-size:29px;font-weight:800;margin:8px 0}.score-tile .label{font-size:12px;color:#eee}
+        .score-track{height:7px;background:#ffffff35;border-radius:10px;overflow:hidden;margin:9px 0}.score-fill{height:100%;background:#f15bad;width:0;transition:width .25s}
+        .score-tile .meta{font-size:11px;color:#e4dfe8}.student-status{margin-top:14px;padding:12px 14px;border-radius:9px;background:#ffffff17;font-weight:700}
+        .student-status.pass{background:#166534;color:white}.student-status.fail{background:#991b1b;color:white}
+        @media(max-width:800px){.score-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:420px){.score-grid{grid-template-columns:1fr}}
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand">
+            <span class="logo-magenta">T</span>
+            <span class="model-name">Speedport Plus</span>
+        </div>
+        <div class="header-actions">
+            <div class="status-pill">
+                <span class="status-dot"></span>
+                <span>DSL Synchronized (VDSL2 200/20)</span>
+            </div>
+            <button class="btn-logout" onclick="location.reload()">Ανανέωση</button>
+        </div>
+    </header>
+
+    <div class="training-panel">
+      <strong>Εκπαιδευόμενος:</strong>
+      <select id="trainee-select" onchange="chooseTrainee()"><option value="">Επιλέξτε όνομα...</option></select>
+      <span id="trainee-progress" class="training-note">Επιλέξτε εκπαιδευόμενο για καταγραφή βαθμολογίας.</span>
+    </div>
+    <div class="training-panel" style="background:#fff8ed">Κάθε σενάριο επιτρέπει έως δύο προσπάθειες. Λάθος απάντηση: 0 μονάδες. Σωστή απάντηση στην 1η προσπάθεια: 100 μονάδες. Σωστή απάντηση στη 2η προσπάθεια: 75 μονάδες. Μετά από σωστή απάντηση το σενάριο κλειδώνει. Η τελική βαθμολογία είναι ο μέσος όρος των 3 σεναρίων (βάση επιτυχίας 60/100).</div>
+    <section class="student-dash" aria-label="Προσωπικό dashboard βαθμολογίας">
+      <h2>📊 Η πρόοδός μου</h2><p id="dash-name">Επιλέξτε το όνομά σας για να δείτε την πρόοδό σας.</p>
+      <div class="score-grid">
+        <div class="score-tile"><div class="label">Σενάριο 1 · Wi-Fi</div><div class="value" id="dash-score-1">—</div><div class="score-track"><div class="score-fill" id="dash-bar-1"></div></div><div class="meta" id="dash-attempt-1">0 από 2 προσπάθειες</div></div>
+        <div class="score-tile"><div class="label">Σενάριο 2 · Port Forwarding</div><div class="value" id="dash-score-2">—</div><div class="score-track"><div class="score-fill" id="dash-bar-2"></div></div><div class="meta" id="dash-attempt-2">0 από 2 προσπάθειες</div></div>
+        <div class="score-tile"><div class="label">Σενάριο 3 · LAN/DHCP</div><div class="value" id="dash-score-3">—</div><div class="score-track"><div class="score-fill" id="dash-bar-3"></div></div><div class="meta" id="dash-attempt-3">0 από 2 προσπάθειες</div></div>
+        <div class="score-tile"><div class="label">Τελικός βαθμός</div><div class="value" id="dash-final">—</div><div class="score-track"><div class="score-fill" id="dash-bar-final"></div></div><div class="meta">Άριστα 100 · Βάση 60</div></div>
+      </div><div class="student-status" id="dash-status">Σε εξέλιξη · ολοκληρώστε και τα τρία σενάρια.</div>
+    </section>
+    <!-- Selection Bar -->
+    <div class="scenario-bar">
+        <span class="scenario-title">📌 Επιλογή Ασκησης:</span>
+        <button id="btn-scen-1" class="btn-scenario active-scenario" onclick="selectScenario(1)">Σενάριο 1: Διαχωρισμός Wi-Fi</button>
+        <button id="btn-scen-2" class="btn-scenario" onclick="selectScenario(2)">Σενάριο 2: Port Forwarding DVR</button>
+        <button id="btn-scen-3" class="btn-scenario" onclick="selectScenario(3)">Σενάριο 3: Αλλαγή Router IP & DHCP</button>
+        
+        
+        <button class="btn-validate" onclick="validateUserEntry()">🔍 Έλεγχος Καταχώρισης</button>
+    </div>
+
+    <div class="main-container">
+        <aside>
+            <ul class="nav-list">
+                <li class="nav-item active" onclick="switchTab('overview', this)">
+                    <a class="nav-link" title="Επισκόπηση">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-text">Επισκόπηση</span>
+                    </a>
+                </li>
+                <li class="nav-item" onclick="switchTab('internet', this)">
+                    <a class="nav-link" title="Internet">
+                        <span class="nav-icon">🌐</span>
+                        <span class="nav-text">Internet / WAN</span>
+                    </a>
+                </li>
+                <li class="nav-item" onclick="switchTab('wifi', this)">
+                    <a class="nav-link" title="WLAN">
+                        <span class="nav-icon">📶</span>
+                        <span class="nav-text">WLAN (2.4 &amp; 5G)</span>
+                    </a>
+                </li>
+                <li class="nav-item" onclick="switchTab('guest-wifi', this)">
+                    <a class="nav-link" title="Guest Wi-Fi">
+                        <span class="nav-icon">👥</span>
+                        <span class="nav-text">Guest Wi-Fi</span>
+                    </a>
+                </li>
+                <li class="nav-item" onclick="switchTab('lan', this)">
+                    <a class="nav-link" title="LAN">
+                        <span class="nav-icon">🔌</span>
+                        <span class="nav-text">LAN &amp; DHCP</span>
+                    </a>
+                </li>
+                <li class="nav-item" onclick="switchTab('security', this)">
+                    <a class="nav-link" title="Security">
+                        <span class="nav-icon">🛡️</span>
+                        <span class="nav-text">Port Forwarding</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <main>
+            <!-- Dynamic Exercise Description Banner -->
+            <div id="exercise-box" class="exercise-card">
+                <!-- Injected via JavaScript -->
+            </div>
+
+            <div id="alert-box" class="alert"><span id="alert-msg"></span></div>
+
+            <!-- OVERVIEW TAB -->
+            <div id="tab-overview" class="tab-content active">
+                <div class="page-title">
+                    <span>Επισκόπηση</span>
+                    <span style="font-size:11px; color:var(--text-muted);">Firmware: v1.0.0.053</span>
+                </div>
+                <div class="card">
+                    <div class="card-header">Κατάσταση Δικτύων</div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <tr>
+                                <th>Wi-Fi 2.4 GHz</th>
+                                <td><strong id="disp-wifi-24" style="color:var(--success);">Ενεργό</strong> (<span id="disp-ssid-24">COSMOTE-Plus-2.4G</span>)</td>
+                            </tr>
+                            <tr>
+                                <th>Wi-Fi 5 GHz</th>
+                                <td><strong id="disp-wifi-5" style="color:var(--success);">Ενεργό</strong> (<span id="disp-ssid-5">COSMOTE-Plus-5G</span>)</td>
+                            </tr>
+                            <tr>
+                                <th>Guest Wi-Fi</th>
+                                <td><strong id="disp-guest-wifi" style="color:var(--danger);">Απενεργοποιημένο</strong></td>
+                            </tr>
+                            <tr>
+                                <th>LAN Gateway IP</th>
+                                <td><span id="disp-lan-gateway">192.168.1.1</span> / 24</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INTERNET TAB -->
+            <div id="tab-internet" class="tab-content">
+                <div class="page-title">Ρυθμίσεις Internet</div>
+                <div class="card">
+                    <div class="card-header">PPPoE Credentials</div>
+                    <form onsubmit="saveGeneric(event, 'Οι ρυθμίσεις WAN αποθηκεύτηκαν!')">
+                        <div class="form-grid">
+                            <div class="form-label">Username PPPoE:</div>
+                            <input type="text" id="wan-username" class="form-input" value="cosmote@online.gr">
+                            <div class="form-label">Password PPPoE:</div>
+                            <input type="password" id="wan-password" class="form-input" value="12345678">
+                            <div class="form-label">VLAN ID:</div>
+                            <input type="number" id="wan-vlan" class="form-input" value="835">
+                        </div>
+                        <button type="submit" class="btn-save">Αποθήκευση</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- WIFI TAB -->
+            <div id="tab-wifi" class="tab-content">
+                <div class="page-title">Ρυθμίσεις Wi-Fi</div>
+                
+                <div class="card" id="band-steering-card">
+                    <div class="card-header">Κοινό Wi-Fi / Band Steering</div>
+                    <form onsubmit="saveBandSteering(event)">
+                        <div class="form-grid">
+                            <div class="form-label">Band Steering:</div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="band-steering-enable" checked onchange="toggleBandSteering()">
+                                <span class="slider"></span>
+                            </label>
+                            <div style="grid-column: 1 / -1; font-size:12px; color:#666;">
+                               
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-save">Αποθήκευση Band Steering</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">Wi-Fi 2.4 GHz</div>
+                    <form onsubmit="saveWifi24(event)">
+                        <div class="form-grid">
+                            <div class="form-label">Ενεργό:</div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="wifi-24-enable" checked>
+                                <span class="slider"></span>
+                            </label>
+                            <div class="form-label">SSID (2.4 GHz):</div>
+                            <input type="text" id="wifi-24-ssid" class="form-input" value="COSMOTE-Plus-2.4G">
+                            <div class="form-label">WPA Key:</div>
+                            <input type="text" id="wifi-24-key" class="form-input" value="WLAN8a92Kf39X">
+                            <div class="form-label">Κανάλι:</div>
+                            <select id="wifi-24-channel" class="form-select">
+                                <option value="auto">Auto</option>
+                                <option value="1">Channel 1</option>
+                                <option value="6" selected>Channel 6</option>
+                                <option value="11">Channel 11</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-save">Αποθήκευση 2.4 GHz</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">Wi-Fi 5 GHz</div>
+                    <form onsubmit="saveWifi5(event)">
+                        <div class="form-grid">
+                            <div class="form-label">Ενεργό:</div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="wifi-5-enable" checked>
+                                <span class="slider"></span>
+                            </label>
+                            <div class="form-label">SSID (5 GHz):</div>
+                            <input type="text" id="wifi-5-ssid" class="form-input" value="COSMOTE-Plus-5G">
+                            <div class="form-label">WPA Key:</div>
+                            <input type="text" id="wifi-5-key" class="form-input" value="WLAN8a92Kf39X">
+                            <div class="form-label">Κανάλι:</div>
+                            <select id="wifi-5-channel" class="form-select">
+                                <option value="auto" selected>Auto (DFS)</option>
+                                <option value="36">Channel 36</option>
+                                <option value="44">Channel 44</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-save">Αποθήκευση 5 GHz</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- GUEST WIFI TAB -->
+            <div id="tab-guest-wifi" class="tab-content">
+                <div class="page-title">Guest Wi-Fi</div>
+                <div class="card">
+                    <div class="card-header">Guest WLAN Parameters</div>
+                    <form onsubmit="saveGuestWifi(event)">
+                        <div class="form-grid">
+                            <div class="form-label">Ενεργοποίηση:</div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="guest-wifi-enable" onchange="toggleGuestFields()">
+                                <span class="slider"></span>
+                            </label>
+
+                            <div class="form-label">Guest SSID:</div>
+                            <input type="text" id="guest-ssid" class="form-input" value="COSMOTE-Guest" disabled>
+
+                            <div class="form-label">Password:</div>
+                            <input type="text" id="guest-key" class="form-input" value="GuestPass2026!" disabled>
+
+                            <div class="form-label">Client Isolation:</div>
+                            <div>
+                                <input type="checkbox" id="guest-isolation" checked disabled>
+                                <label for="guest-isolation" style="font-size:12px;">Απομόνωση συσκευών</label>
+                            </div>
+
+                            <div class="form-label">Router UI Block:</div>
+                            <div>
+                                <input type="checkbox" id="guest-block-lan" checked disabled>
+                                <label for="guest-block-lan" style="font-size:12px;">Block Router Web GUI</label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-save">Εφαρμογή Guest Wi-Fi</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- LAN TAB -->
+            <div id="tab-lan" class="tab-content">
+                <div class="page-title">LAN &amp; DHCP</div>
+
+                <div class="card">
+                    <div class="card-header">IPv4 Router Setup &amp; DHCP Server</div>
+                    <form onsubmit="saveLanConfig(event)">
+                        <div class="form-grid">
+                            <div class="form-label">Router IP:</div>
+                            <input type="text" id="lan-ip" class="form-input" value="192.168.1.1">
+
+                            <div class="form-label">Subnet Mask:</div>
+                            <select id="lan-netmask" class="form-select">
+                                <option value="255.255.255.0">255.255.255.0 (/24)</option>
+                                <option value="255.255.255.128">255.255.255.128 (/25)</option>
+                            </select>
+
+                            <div class="form-label">DHCP Server:</div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="dhcp-enable" checked onchange="toggleDhcpFields()">
+                                <span class="slider"></span>
+                            </label>
+
+                            <div class="form-label">Start IP (Pool):</div>
+                            <input type="text" id="dhcp-start-ip" class="form-input" value="192.168.1.2">
+
+                            <div class="form-label">End IP (Pool):</div>
+                            <input type="text" id="dhcp-end-ip" class="form-input" value="192.168.1.254">
+
+                            <div class="form-label">Lease Time:</div>
+                            <select id="dhcp-lease-time" class="form-select">
+                                <option value="1h">1 Ώρα</option>
+                                <option value="12h">12 Ώρες</option>
+                                <option value="1d" selected>1 Ημέρα (24h)</option>
+                                <option value="7d">7 Ημέρες</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-save">Αποθήκευση LAN &amp; DHCP</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">Static DHCP Leases</div>
+                    <form onsubmit="addStaticLease(event)">
+                        <div class="form-grid">
+                            <div class="form-label">Όνομα:</div>
+                            <input type="text" id="static-name" class="form-input" placeholder="Home Server">
+
+                            <div class="form-label">MAC:</div>
+                            <input type="text" id="static-mac" class="form-input" placeholder="00:11:22:33:44:55">
+
+                            <div class="form-label">Reserved IP:</div>
+                            <input type="text" id="static-ip" class="form-input" placeholder="192.168.1.200">
+                        </div>
+                        <button type="submit" class="btn-save">Προσθήκη Static Lease</button>
+                    </form>
+
+                    <div class="table-responsive" style="margin-top:10px;">
+                        <table class="data-table" id="table-static-leases">
+                            <thead>
+                                <tr>
+                                    <th>Όνομα</th>
+                                    <th>MAC</th>
+                                    <th>IP</th>
+                                    <th>-</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECURITY TAB -->
+            <div id="tab-security" class="tab-content">
+                <div class="page-title">Port Forwarding</div>
+                
+                <div class="card">
+                    <div class="card-header">Προσθήκη Κανόνα</div>
+                    <form onsubmit="addPortForwardRule(event)">
+                        <div class="form-grid">
+                            <div class="form-label">Service Name:</div>
+                            <input type="text" id="pf-name" class="form-input" placeholder="π.χ. DVR Cameras">
+
+                            <div class="form-label">Protocol:</div>
+                            <select id="pf-proto" class="form-select">
+                                <option value="TCP">TCP</option>
+                                <option value="UDP">UDP</option>
+                                <option value="TCP/UDP">TCP / UDP</option>
+                            </select>
+
+                            <div class="form-label">WAN Port:</div>
+                            <input type="text" id="pf-wan-port" class="form-input" placeholder="90">
+
+                            <div class="form-label">LAN IP:</div>
+                            <input type="text" id="pf-lan-ip" class="form-input" placeholder="192.168.1.100">
+
+                            <div class="form-label">LAN Port:</div>
+                            <input type="text" id="pf-lan-port" class="form-input" placeholder="90">
+                        </div>
+                        <button type="submit" class="btn-save">Προσθήκη Κανόνα</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">Ενεργοί Κανόνες</div>
+                    <div class="table-responsive">
+                        <table class="data-table" id="table-port-forward">
+                            <thead>
+                                <tr>
+                                    <th>Όνομα</th>
+                                    <th>Proto</th>
+                                    <th>WAN Port</th>
+                                    <th>LAN IP</th>
+                                    <th>LAN Port</th>
+                                    <th>-</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <footer>
+        Speedport Plus Interactive Exercises &copy; Cosmote Network Training
+    </footer>
+
+    <script>
+        const TRAINING_KEY = 'telekom_speedport_training_v1';
+        const DEFAULT_TRAINEES = ['ΜΑΣΟΥΡΗΣ ΕΥΑΓΓΕΛΟΣ','ΠΑΝΑΓΟΣ ΧΡΗΣΤΟΣ','ΣΕΒΑΣΤΟΣ ΤΡΥΦΩΝ'];
+        let training = loadTraining();
+        let activeTrainee = '';
+        function loadTraining() {try {const data=JSON.parse(localStorage.getItem(TRAINING_KEY)); if(data && Array.isArray(data.names) && data.names.length) return data;} catch(e) {} return {names:[...DEFAULT_TRAINEES],results:{}}}
+        function persistTraining() {localStorage.setItem(TRAINING_KEY,JSON.stringify(training))}
+        function refreshTrainees() {
+          const sel=document.getElementById('trainee-select');
+          sel.replaceChildren(new Option('Επιλέξτε όνομα...',''));
+          training.names.forEach(n=>sel.add(new Option(n,n)));
+          sel.value=activeTrainee;
+          
+          updateProgress();
+        }
+        function chooseTrainee() {activeTrainee=document.getElementById('trainee-select').value;training=loadTraining();updateProgress()}
+        function attemptsOf(entry) {return entry?.attempts?.length ? entry.attempts : (entry && typeof entry.score==='number' ? [entry.score] : [])}
+        function updateProgress() {
+          training=loadTraining();
+          const r=training.results[activeTrainee] || {};
+          const scores=[1,2,3].map(i=>r[i]?.score??null);
+          const done=scores.filter(v=>v!==null).length;
+          const grade=finalGrade(scores);
+          const out=document.getElementById('trainee-progress');
+          out.textContent=activeTrainee ? `Ολοκληρωμένα σενάρια: ${done}/3 · Τελικός βαθμός: ${done===3?grade+'/100':'σε εξέλιξη'}` : 'Επιλέξτε εκπαιδευόμενο.';
+          document.getElementById('dash-name').textContent=activeTrainee || 'Επιλέξτε το όνομά σας για να δείτε την πρόοδό σας.';
+          for(let i=1;i<=3;i++){
+            const a=activeTrainee?attemptsOf(r[i]):[];
+            const v=scores[i-1];
+            document.getElementById('dash-score-'+i).textContent=v===null?'—':v+'/100';
+            document.getElementById('dash-bar-'+i).style.width=(v??0)+'%';
+            document.getElementById('dash-attempt-'+i).textContent=`${a.length} από 2 προσπάθειες · ${a.includes(100)||a.includes(75)?"Ολοκληρώθηκε":Math.max(0,2-a.length)+" διαθέσιμες"}`;
+          }
+          document.getElementById('dash-final').textContent=done===3?grade+'/100':'—';
+          document.getElementById('dash-bar-final').style.width=done===3?grade+'%':'0%';
+          const status=document.getElementById('dash-status');
+          status.className='student-status'+(done===3?(grade>=60?' pass':' fail'):'');
+          status.textContent=done!==3?`ΣΕ ΕΞΕΛΙΞΗ · ${done}/3 σενάρια ολοκληρωμένα`:grade>=60?'✓ ΕΠΙΤΥΧΩΝ':'✕ ΜΗ ΕΠΙΤΥΧΩΝ';
+        }
+        function finalGrade(scores) {return Math.round(scores.reduce((a,b)=>a+(b??0),0)/3)}
+        function resultStatus(scores) {return scores.some(v=>v===null) ? 'ΣΕ ΕΞΕΛΙΞΗ' : (finalGrade(scores)>=60 ? 'ΕΠΙΤΥΧΩΝ' : 'ΜΗ ΕΠΙΤΥΧΩΝ')}
+        function recordScore(score) {
+          if(!activeTrainee){showAlert('Επιλέξτε πρώτα το ονοματεπώνυμό σας.',true);return false}
+          training=loadTraining();
+          const r=training.results[activeTrainee] ||= {};
+          const previous=attemptsOf(r[currentScenario]);
+          if(previous.length>=2 || previous.some(v=>v>0)){showAlert('Το σενάριο έχει ολοκληρωθεί ή έχουν εξαντληθεί οι δύο προσπάθειες.',true);return false;}
+          const adjustedScore=score===100 ? (previous.length===1 ? 75 : 100) : 0;
+          const attempts=[...previous,adjustedScore];
+          r[currentScenario]={score:Math.max(...attempts),attempts,updated:new Date().toISOString()};
+          persistTraining();updateProgress();return true;
+        }
+        let currentScenario = 1;
+        let bandSteeringEnabled = true;
+
+        function toggleBandSteering() {
+            const enabled = document.getElementById('band-steering-enable').checked;
+            bandSteeringEnabled = enabled;
+
+            
+            const ssid24 = document.getElementById('wifi-24-ssid');
+            const ssid5 = document.getElementById('wifi-5-ssid');
+
+            if (enabled) {
+                ssid24.style.backgroundColor = '#f3f3f3';
+                ssid5.style.backgroundColor = '#f3f3f3';
+                ssid24.title = 'Με ενεργό Band Steering τα SSID λειτουργούν ως κοινό Wi-Fi.';
+                ssid5.title = 'Με ενεργό Band Steering τα SSID λειτουργούν ως κοινό Wi-Fi.';
+            } else {
+                ssid24.style.backgroundColor = '';
+                ssid5.style.backgroundColor = '';
+                ssid24.title = '';
+                ssid5.title = '';
+            }
+
+            if (currentScenario === 1) {
+                if (enabled) {
+                    showAlert(' ', true);
+                } else {
+                    showAlert('✔ Το Band Steering απενεργοποιήθηκε. Μπορείτε τώρα να διαχωρίσετε τα SSID 2.4 GHz και 5 GHz.');
+                }
+            }
+        }
+
+        function saveBandSteering(e) {
+            e.preventDefault();
+            const enabled = document.getElementById('band-steering-enable').checked;
+            bandSteeringEnabled = enabled;
+
+            if (currentScenario === 1 && enabled) {
+                showAlert('⚠️ Το Band Steering παραμένει ενεργό. Για να ολοκληρώσετε το Σενάριο 1 πρέπει να το απενεργοποιήσετε.', true);
+            } else {
+                showAlert(`Οι ρυθμίσεις Band Steering αποθηκεύτηκαν (${enabled ? 'Ενεργό' : 'Απενεργοποιημένο'}).`);
+            }
+        }
+
+        const exerciseTexts = {
+            1: `<h3>📣 Εκφώνηση Σεναρίου 1: Διαχωρισμός Wi-Fi + Guest Wi-Fi</h3>
+                <p>Ο συνδρομητής επιθυμεί να διαχωρίσει τις συχνότητες του Wi-Fi στο router του για να συνδέσει έξυπνες συσκευές (IoT) και να ενεργοποιήσει Guest Wi-Fi.</p>
+                <ul>
+                    <li>Μεταβείτε στην καρτέλα <strong>WLAN (2.4 & 5G)</strong>.</li>
+                    <li>Αρχικά το <strong>Band Steering είναι ενεργό</strong>. Απενεργοποιήστε το.</li>
+                    <li>Ορίστε στο <strong>2.4 GHz</strong> διαφορετικό SSID από το <strong>5 GHz</strong> (π.χ. <code>Cosmote_2.4G</code> και <code>Cosmote_5G</code>).</li>
+                    <li>Εισάγετε έγκυρους κωδικούς πρόσβασης WPA Key (τουλάχιστον 8 χαρακτήρες) για κάθε συχνότητα.</li>
+                    <li>Μεταβείτε στην καρτέλα <strong>Guest Wi-Fi</strong> και ενεργοποιήστε το.</li>
+                </ul>`,
+            2: `<h3>📣 Εκφώνηση Σεναρίου 2: Port Forwarding σε Καταγραφικό (DVR)</h3>
+                <p>Απαιτείται η απομακρυσμένη πρόσβαση σε ένα καταγραφικό καμερών ασφαλείας.</p>
+                <ul>
+                    <li>Μεταβείτε στην καρτέλα <strong>Port Forwarding</strong>.</li>
+                    <li>Δημιουργήστε έναν νέο κανόνα για τη θύρα <strong>90</strong> (WAN Port & LAN Port).</li>
+                    <li>Η IP της συσκευής (LAN IP) πρέπει να είναι έγκυρη IPv4 και να βρίσκεται <strong>εντός του εύρους IP</strong> που μοιράζει ο DHCP Server του router.</li>
+                </ul>`,
+            3: `<h3>📣 Εκφώνηση Σεναρίου 3: Αλλαγή Router IP & Προσαρμογή DHCP Pool</h3>
+                <p>Για ανάγκες ενοποίησης δικτύου, ο Router πρέπει να αλλάξει υποδίκτυο (Subnet).</p>
+                <ul>
+                    <li>Μεταβείτε στην καρτέλα <strong>LAN & DHCP</strong>.</li>
+                    <li>Αλλάξτε την IP του Router σε <strong>192.168.2.1</strong>.</li>
+                    <li>Προσαρμόστε το εύρος DHCP (Start IP & End IP) ώστε να ανήκει στο νέο Subnet (<code>192.168.2.x</code>) και να μην περιλαμβάνει την IP του router.</li>
+                </ul>`
+        };
+
+        function initExercise() {
+            selectScenario(1);
+        }
+
+        function selectScenario(id) {
+            currentScenario = id;
+            for(let i=1; i<=3; i++) {
+                document.getElementById(`btn-scen-${i}`).classList.remove('active-scenario');
+            }
+            document.getElementById(`btn-scen-${id}`).classList.add('active-scenario');
+            document.getElementById('exercise-box').innerHTML = exerciseTexts[id];
+            
+            // Navigate to relevant tab for convenience
+            if(id === 1) switchTab('wifi', document.querySelectorAll('.nav-item')[2]);
+            if(id === 2) switchTab('security', document.querySelectorAll('.nav-item')[5]);
+            if(id === 3) switchTab('lan', document.querySelectorAll('.nav-item')[4]);
+
+            showAlert(`Επιλέχθηκε το Σενάριο ${id}. Διαβάστε την εκφώνηση και καταχωρίστε τις ρυθμίσεις!`);
+        }
+
+        function switchTab(tabId, element) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            if(element) element.classList.add('active');
+        }
+
+        function showAlert(msg, isError = false) {
+            const alertBox = document.getElementById('alert-box');
+            document.getElementById('alert-msg').innerText = msg;
+            alertBox.className = "alert " + (isError ? "alert-danger" : "alert-success");
+            alertBox.style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function saveGeneric(e, message) {
+            e.preventDefault();
+            showAlert(message);
+        }
+
+        function saveWifi24(e) {
+            e.preventDefault();
+            const ssid = document.getElementById('wifi-24-ssid').value;
+            document.getElementById('disp-ssid-24').innerText = ssid;
+            showAlert('Οι ρυθμίσεις 2.4 GHz αποθηκεύτηκαν προσωρινά στο UI! Πατήστε "Έλεγχος Καταχώρισης" για επαλήθευση.');
+        }
+
+        function saveWifi5(e) {
+            e.preventDefault();
+            const ssid = document.getElementById('wifi-5-ssid').value;
+            document.getElementById('disp-ssid-5').innerText = ssid;
+            showAlert('Οι ρυθμίσεις 5 GHz αποθηκεύτηκαν προσωρινά στο UI! Πατήστε "Έλεγχος Καταχώρισης" για επαλήθευση.');
+        }
+
+        function toggleGuestFields() {
+            const enabled = document.getElementById('guest-wifi-enable').checked;
+            document.getElementById('guest-ssid').disabled = !enabled;
+            document.getElementById('guest-key').disabled = !enabled;
+            document.getElementById('guest-isolation').disabled = !enabled;
+            document.getElementById('guest-block-lan').disabled = !enabled;
+        }
+
+        function saveGuestWifi(e) {
+            e.preventDefault();
+            const enabled = document.getElementById('guest-wifi-enable').checked;
+            const disp = document.getElementById('disp-guest-wifi');
+            disp.innerText = enabled ? 'Ενεργό' : 'Απενεργοποιημένο';
+            disp.style.color = enabled ? 'var(--success)' : 'var(--danger)';
+
+            if (currentScenario === 1 && !enabled) {
+                showAlert('⚠️', true);
+            } else {
+                showAlert(`Οι ρυθμίσεις Guest Wi-Fi αποθηκεύτηκαν (${enabled ? 'Ενεργό' : 'Απενεργοποιημένο'}).`);
+            }
+        }
+
+        function toggleDhcpFields() {
+            const enabled = document.getElementById('dhcp-enable').checked;
+            document.getElementById('dhcp-start-ip').disabled = !enabled;
+            document.getElementById('dhcp-end-ip').disabled = !enabled;
+            document.getElementById('dhcp-lease-time').disabled = !enabled;
+        }
+
+        function saveLanConfig(e) {
+            if(e) e.preventDefault();
+            const newIp = document.getElementById('lan-ip').value;
+            document.getElementById('disp-lan-gateway').innerText = newIp;
+            showAlert('Οι ρυθμίσεις LAN/DHCP αποθηκεύτηκαν προσωρινά στο UI!');
+        }
+
+        function addStaticLease(e) {
+            e.preventDefault();
+            const name = document.getElementById('static-name').value;
+            const mac = document.getElementById('static-mac').value;
+            const ip = document.getElementById('static-ip').value;
+
+            if(!name || !mac || !ip) {
+                alert('Συμπληρώστε όλα τα πεδία!');
+                return;
+            }
+
+            const table = document.getElementById('table-static-leases').getElementsByTagName('tbody')[0];
+            const newRow = table.insertRow();
+            newRow.innerHTML = `
+                <td>${name}</td>
+                <td>${mac}</td>
+                <td>${ip}</td>
+                <td><button style="color:red; cursor:pointer;" onclick="deleteRow(this)">X</button></td>
+            `;
+
+            showAlert('Static lease προστέθηκε!');
+            document.getElementById('static-name').value = '';
+            document.getElementById('static-mac').value = '';
+            document.getElementById('static-ip').value = '';
+        }
+
+        function addPortForwardRule(e) {
+            if(e) e.preventDefault();
+            const name = document.getElementById('pf-name').value;
+            const proto = document.getElementById('pf-proto').value;
+            const wanPort = document.getElementById('pf-wan-port').value;
+            const lanIp = document.getElementById('pf-lan-ip').value;
+            const lanPort = document.getElementById('pf-lan-port').value;
+
+            if(!name || !wanPort || !lanIp || !lanPort) {
+                alert('Συμπληρώστε όλα τα πεδία!');
+                return;
+            }
+
+            const table = document.getElementById('table-port-forward').getElementsByTagName('tbody')[0];
+            const newRow = table.insertRow();
+            newRow.innerHTML = `
+                <td>${name}</td>
+                <td>${proto}</td>
+                <td>${wanPort}</td>
+                <td>${lanIp}</td>
+                <td>${lanPort}</td>
+                <td><button style="color:red; cursor:pointer;" onclick="deleteRow(this)">X</button></td>
+            `;
+
+            showAlert(`Προστέθηκε κανόνας Port Forwarding για "${name}"!`);
+            document.getElementById('pf-name').value = '';
+            document.getElementById('pf-wan-port').value = '';
+            document.getElementById('pf-lan-ip').value = '';
+            document.getElementById('pf-lan-port').value = '';
+        }
+
+        function deleteRow(btn) {
+            btn.parentNode.parentNode.remove();
+            showAlert('Ο κανόνας διαγράφηκε.');
+        }
+
+        /* -------------------------------------------------------------
+           INTERACTIVE VALIDATION ENGINE FOR USER MANUAL INPUTS
+        ------------------------------------------------------------- */
+        function isValidIP(ip) {
+            const regex = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+            return regex.test(ip);
+        }
+
+        function getSubnet(ip) {
+            return ip.split('.').slice(0, 3).join('.');
+        }
+
+        function getLastOctet(ip) {
+            return parseInt(ip.split('.')[3], 10);
+        }
+
+        function validateUserEntry() {
+            if(!activeTrainee){showAlert("Επιλέξτε πρώτα εκπαιδευόμενο.",true);return;}
+            training=loadTraining();
+            const existingAttempts=attemptsOf(training.results[activeTrainee]?.[currentScenario]);
+            if(existingAttempts.length>=2 || existingAttempts.some(v=>v>0)) {showAlert("Το σενάριο έχει ολοκληρωθεί ή έχουν εξαντληθεί οι δύο προσπάθειες.",true);return;}
+            let errors = [];
+            let successMsgs = [];
+
+            if (currentScenario === 1) {
+                // ΕΛΕΓΧΟΣ ΣΕΝΑΡΙΟΥ 1
+                const ssid24 = document.getElementById('wifi-24-ssid').value.trim();
+                const ssid5 = document.getElementById('wifi-5-ssid').value.trim();
+                const key24 = document.getElementById('wifi-24-key').value;
+                const key5 = document.getElementById('wifi-5-key').value;
+                const bandSteering = document.getElementById('band-steering-enable').checked;
+                const guestWifi = document.getElementById('guest-wifi-enable').checked;
+
+                if (bandSteering) {
+                    errors.push("Το Band Steering είναι ενεργό. Για το Σενάριο 1 πρέπει να το απενεργοποιήσετε.");
+                } else {
+                    successMsgs.push("✔ Το Band Steering απενεργοποιήθηκε σωστά.");
+                }
+
+                if (!guestWifi) {
+                    errors.push("Το Guest Wi-Fi είναι απενεργοποιημένο. Για το Σενάριο 1 πρέπει να το ενεργοποιήσετε.");
+                } else {
+                    successMsgs.push("✔ Το Guest Wi-Fi είναι ενεργοποιημένο.");
+                }
+
+                if (ssid24 === "" || ssid5 === "") {
+                    errors.push("Τα SSID δεν μπορούν να είναι κενά.");
+                } else if (ssid24 === ssid5) {
+                    errors.push(`Τα SSID είναι ίδια ("${ssid24}"). Πρέπει να καταχωρίσετε διαφορετικά ονόματα για τα 2.4GHz και 5GHz.`);
+                } else {
+                    successMsgs.push(`✔ Ορθός διαχωρισμός SSID: "${ssid24}" (2.4GHz) & "${ssid5}" (5GHz).`);
+                }
+
+                if (key24.length < 8) {
+                    errors.push("Το WPA Key στο 2.4GHz πρέπει να είναι τουλάχιστον 8 χαρακτήρες.");
+                }
+                if (key5.length < 8) {
+                    errors.push("Το WPA Key στο 5GHz πρέπει να είναι τουλάχιστον 8 χαρακτήρες.");
+                }
+                if (key24.length >= 8 && key5.length >= 8) {
+                    successMsgs.push("✔ Έγκυρα WPA Keys (≥ 8 χαρακτήρες).");
+                }
+            } 
+            else if (currentScenario === 2) {
+                // ΕΛΕΓΧΟΣ ΣΕΝΑΡΙΟΥ 2
+                const lanIp = document.getElementById('lan-ip').value.trim();
+                const startIp = document.getElementById('dhcp-start-ip').value.trim();
+                const endIp = document.getElementById('dhcp-end-ip').value.trim();
+                const dhcpEnabled = document.getElementById('dhcp-enable').checked;
+
+                const pfRows = document.querySelectorAll('#table-port-forward tbody tr');
+                let foundValidRule = false;
+
+                if (pfRows.length === 0) {
+                    errors.push("Δεν έχετε προσθέσει κανέναν κανόνα στον πίνακα Port Forwarding.");
+                } else {
+                    pfRows.forEach(row => {
+                        const cells = row.querySelectorAll('td');
+                        if (cells.length >= 5) {
+                            const wanPort = cells[2].innerText.trim();
+                            const lanIpRule = cells[3].innerText.trim();
+                            const lanPort = cells[4].innerText.trim();
+
+                            if (wanPort === '90' || lanPort === '90') {
+                                if (!isValidIP(lanIpRule)) {
+                                    errors.push(`Η IP (${lanIpRule}) στον κανόνα Port Forwarding δεν είναι έγκυρη IPv4.`);
+                                } else {
+                                    const ruleSubnet = getSubnet(lanIpRule);
+                                    const currentLanSubnet = getSubnet(lanIp);
+
+                                    if (ruleSubnet !== currentLanSubnet) {
+                                        errors.push(`Η IP του καταγραφικού (${lanIpRule}) βρίσκεται σε διαφορετικό Subnet από τον Router (${currentLanSubnet}.x).`);
+                                    } else if (dhcpEnabled && isValidIP(startIp) && isValidIP(endIp)) {
+                                        const ipLast = getLastOctet(lanIpRule);
+                                        const startLast = getLastOctet(startIp);
+                                        const endLast = getLastOctet(endIp);
+
+                                        if (ipLast < startLast || ipLast > endLast) {
+                                            errors.push(`Η IP του καταγραφικού (${lanIpRule}) βρίσκεται εκτός του DHCP Pool (${startIp} - ${endIp}). Η εκφώνηση ζητά να είναι ΕΝΤΟΣ του εύρους.`);
+                                        } else {
+                                            foundValidRule = true;
+                                            successMsgs.push(`✔ Ορθός κανόνας Port Forwarding στη θύρα 90 με IP ${lanIpRule} εντός του εύρους DHCP.`);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    if (!foundValidRule && errors.length === 0) {
+                        errors.push("Δεν βρέθηκε κανόνας Port Forwarding που να χρησιμοποιεί τη θύρα 90.");
+                    }
+                }
+            } 
+            else if (currentScenario === 3) {
+                // ΕΛΕΓΧΟΣ ΣΕΝΑΡΙΟΥ 3
+                const lanIp = document.getElementById('lan-ip').value.trim();
+                const dhcpEnabled = document.getElementById('dhcp-enable').checked;
+                const startIp = document.getElementById('dhcp-start-ip').value.trim();
+                const endIp = document.getElementById('dhcp-end-ip').value.trim();
+
+                if (lanIp !== "192.168.2.1") {
+                    errors.push(`Η IP του Router είναι "${lanIp}". Η εκφώνηση απαιτεί να την αλλάξετε σε "192.168.2.1".`);
+                } else {
+                    successMsgs.push("✔ Η IP του Router ρυθμίστηκε σωστά σε 192.168.2.1.");
+                }
+
+                if (!dhcpEnabled) {
+                    errors.push("Ο DHCP Server είναι απενεργοποιημένος. Πρέπει να είναι ενεργός.");
+                } else {
+                    if (!isValidIP(startIp) || !isValidIP(endIp)) {
+                        errors.push("Οι διευθύνσεις Start/End IP του DHCP Pool δεν είναι έγκυρες.");
+                    } else {
+                        const startSubnet = getSubnet(startIp);
+                        const endSubnet = getSubnet(endIp);
+
+                        if (startSubnet !== "192.168.2" || endSubnet !== "192.168.2") {
+                            errors.push(`Το εύρος DHCP (${startIp} - ${endIp}) δεν προσαρμόστηκε στο νέο Subnet (192.168.2.x).`);
+                        } else {
+                            const startLast = getLastOctet(startIp);
+                            const endLast = getLastOctet(endIp);
+
+                            if (startLast <= 1) {
+                                errors.push("Η Start IP του DHCP περιλαμβάνει/συμπίπτει με την IP του Router (192.168.2.1). Ορίστε Start IP ≥ 192.168.2.2.");
+                            } else if (startLast >= endLast) {
+                                errors.push("Η Start IP του DHCP πρέπει να είναι μικρότερη από την End IP.");
+                            } else {
+                                successMsgs.push(`✔ Το εύρος DHCP προσαρμόστηκε ορθά σε ${startIp} - ${endIp}.`);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Δυαδική βαθμολόγηση: λάθος = 0, σωστό στην 1η = 100, σωστό στη 2η = 75.
+            const score = errors.length===0 ? 100 : 0;
+            if(!recordScore(score)) return;
+            const saved=training.results[activeTrainee][currentScenario];
+            const used=attemptsOf(saved).length;
+            const earned=attemptsOf(saved)[used-1];
+            const attemptMessage=`\n\nΠροσπάθεια ${used}/2 · Βαθμός προσπάθειας: ${earned}/100 · Βαθμός σεναρίου: ${saved.score}/100`;
+            // ΑΠΟΤΕΛΕΣΜΑ ΕΛΕΓΧΟΥ
+            if (errors.length > 0) {
+                showAlert(`❌ ΛΑΝΘΑΣΜΕΝΗ ΚΑΤΑΧΩΡΙΣΗ (Σενάριο ${currentScenario}):\n\n• ` + errors.join("\n• ") + attemptMessage, true);
+            } else {
+                showAlert(`🎉 ΣΩΣΤΗ ΚΑΤΑΧΩΡΙΣΗ! Ολοκληρώσατε το Σενάριο ${currentScenario} με επιτυχία!\n\n` + successMsgs.join("\n") + attemptMessage, false);
+            }
+        }
+
+        window.onload = function() {
+            refreshTrainees();
+            initExercise();
+            toggleGuestFields();
+            toggleBandSteering();
+            window.addEventListener('storage', e=>{if(e.key===TRAINING_KEY){training=loadTraining();updateProgress();}});
+        };
+    </script>
+</body>
+</html>
